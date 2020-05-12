@@ -277,36 +277,68 @@ func (this *WaterInformationController) parsingParam() (string, error) {
 		logs.Error(err)
 		return "", err
 	}
+	if beego.AppConfig.String("runmode") == "dev" {
+		// 删除6.jpg，1-5.jpg重命名，test.jpg重命名为1.jpg
+		err = os.Remove(rootpath + "6.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		err = os.Rename(rootpath+"5.png", rootpath+"6.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		err = os.Rename(rootpath+"4.png", rootpath+"5.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		err = os.Rename(rootpath+"3.png", rootpath+"4.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		err = os.Rename(rootpath+"2.png", rootpath+"3.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		err = os.Rename(rootpath+"1.png", rootpath+"2.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		err = os.Rename(rootpath+"test.png", rootpath+"1.png")
+		if err != nil {
+			logs.Error(err)
+		}
+		return "1.png", nil
+	}
 	// 删除6.jpg，1-5.jpg重命名，test.jpg重命名为1.jpg
-	err = os.Remove(rootpath + "6.png")
+	err = os.Remove(rootpath + "6.35659cb8.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	err = os.Rename(rootpath+"5.png", rootpath+"6.png")
+	err = os.Rename(rootpath+"5.e98fb380.png", rootpath+"6.35659cb8.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	err = os.Rename(rootpath+"4.png", rootpath+"5.png")
+	err = os.Rename(rootpath+"4.7cf2c2f9.png", rootpath+"5.e98fb380.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	err = os.Rename(rootpath+"3.png", rootpath+"4.png")
+	err = os.Rename(rootpath+"3.55ccb3bd.png", rootpath+"4.7cf2c2f9.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	err = os.Rename(rootpath+"2.png", rootpath+"3.png")
+	err = os.Rename(rootpath+"2.5a85c2ac.png", rootpath+"3.55ccb3bd.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	err = os.Rename(rootpath+"1.png", rootpath+"2.png")
+	err = os.Rename(rootpath+"1.5d5bcc7d.png", rootpath+"2.5a85c2ac.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	err = os.Rename(rootpath+"test.png", rootpath+"1.png")
+	err = os.Rename(rootpath+"test.png", rootpath+"1.5d5bcc7d.png")
 	if err != nil {
 		logs.Error(err)
 	}
-	return "1.png", nil
+	return "1.5d5bcc7d.png", nil
 }
 
 // @Title Get
