@@ -148,6 +148,33 @@ func (this *ForumController) Like() {
 	this.ServeJSON()
 }
 
+type ShareReq struct {
+	ArticleId    int    `json:"article_id"`
+}
+
+// @Title POST
+// @论坛帖子分享操作
+// @Success 200 success
+// @Failure 403 is empty
+// @router /share [post]
+func (this *ForumController) Share() {
+	var r forumRes
+	var req ShareReq
+	body := this.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body, &req); err != nil {
+		logs.Error(err)
+		r.Code = "5000"
+		r.Msg = log.CodeMap[r.Code]
+		this.Data["json"] = r
+		this.ServeJSON()
+		return
+	}
+	r.Code = models.Share(req.ArticleId)
+	r.Msg = log.CodeMap[r.Code]
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
 // @Title Get
 // @获取当前用户对帖子是否点赞
 // @Success 200 success

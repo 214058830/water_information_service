@@ -27,8 +27,9 @@ func init() {
 	orm.SetMaxOpenConns("default", 2000) // 最大打开的连接数
 
 	orm.RegisterModel(new(UserInformation))
-	orm.RegisterModel(new(WaterInformation))
-	orm.RegisterModel(new(WaterInformationDetail))
+	orm.RegisterModel(new(WaterRiverInformation))
+	orm.RegisterModel(new(WaterReservoirInformation))
+	orm.RegisterModel(new(WaterSystemInformation))
 	orm.RegisterModel(new(ForumArticle))
 	orm.RegisterModel(new(ForumProperty))
 	orm.RegisterModel(new(ForumLike))

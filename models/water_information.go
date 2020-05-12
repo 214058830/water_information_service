@@ -1,18 +1,16 @@
 package models
 
 import (
-	"github.com/astaxie/beego"
-	"os"
+	"github.com/astaxie/beego/orm"
 	"water_information_service/dao"
 
 	"github.com/astaxie/beego/logs"
-	"github.com/astaxie/beego/orm"
 )
 
-// 查询所有水利信息
-func SelectAllWaterInformation() (r []dao.WaterInformation, code string) {
+// 查询所有河道信息
+func SelectAllWaterRiver() (r []dao.WaterRiverInformation, code string) {
 	var err error
-	r, err = dao.SelectAllWaterInformation()
+	r, err = dao.SelectAllWaterRiver()
 	if err != nil {
 		logs.Error(err)
 		code = "5000"
@@ -22,117 +20,197 @@ func SelectAllWaterInformation() (r []dao.WaterInformation, code string) {
 	return
 }
 
-type UploadReq struct {
-	CompanyName     string `json:"company_name"`
-	Principal       string `json:"principal"`
-	TelephoneNumber string `json:"telephone_number"`
-	FaxNumber       string `json:"fax_number"`
-	PostCode        string `json:"post_code"`
-	Address         string `json:"address"`
-	Level           string `json:"level"`
-	Introduction    string `json:"introduction"`
-	Path            string
-}
-
-// 录入水利信息
-func Upload(uploadInfo UploadReq) (code string) {
+// 查询所有水库信息
+func SelectAllWaterReservoir() (r []dao.WaterReservoirInformation, code string) {
 	var err error
-	if err = dao.SelectWaterInformationByCompanyName(uploadInfo.CompanyName); err != nil {
-		if (err == orm.ErrNoRows) {
-			var id int64
-			id, err = dao.InsertWaterInformationDetail(uploadInfo.Introduction, uploadInfo.Path)
-			if err != nil {
-				logs.Error(err)
-				code = "5000"
-				return
-			} else {
-				if err = dao.InsertWaterInformation(uploadInfo.CompanyName, uploadInfo.Principal, uploadInfo.TelephoneNumber, uploadInfo.FaxNumber, uploadInfo.PostCode, uploadInfo.Address, uploadInfo.Level, id); err != nil {
-					logs.Error(err)
-					code = "5000"
-					if err = dao.DeleteWaterInformationDetail(id); err != nil {
-						logs.Error(err)
-					}
-					return
-				}
-			}
-		} else {
-			logs.Error(err)
-			code = "5000"
-			return
-		}
-	} else {
-		// 已存在
-		code = "2006"
+	r, err = dao.SelectAllWaterReservoir()
+	if err != nil {
+		logs.Error(err)
+		code = "5000"
 		return
 	}
 	code = "2000"
 	return
 }
 
-// 获取水利信息详情
-func GetWaterInformationDetail(id int64) (r dao.WaterInformationDetail, code string) {
+// 查询所有水系信息
+func SelectAllWaterSystem() (r []dao.WaterSystemInformation, code string) {
 	var err error
-	r, err = dao.SelectWaterInformationDetail(id)
+	r, err = dao.SelectAllWaterSystem()
+	if err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+type RiverReservoirReq struct {
+	Name            string  `json:"name"`
+	Address         string  `json:"address"`
+	RiverName       string  `json:"river_name"`
+	RiverLevel      float32 `json:"river_level"`
+	Flow            float32 `json:"flow"`
+	AlertRiverLevel float32 `json:"alert_river_level"`
+}
+
+// 录入河道信息
+func UploadRiverInformation(uploadInfo RiverReservoirReq) (code string) {
+	logs.Debug(uploadInfo)
+	if err := dao.InsertRiverInformation(uploadInfo.Name, uploadInfo.Address, uploadInfo.RiverName, uploadInfo.RiverLevel, uploadInfo.Flow, uploadInfo.AlertRiverLevel); err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+type AlterRiverReq struct {
+	Id              int64   `json:"id"`
+	Name            string  `json:"name"`
+	Address         string  `json:"address"`
+	RiverName       string  `json:"river_name"`
+	RiverLevel      float32 `json:"river_level"`
+	Flow            float32 `json:"flow"`
+	AlertRiverLevel float32 `json:"alert_river_level"`
+}
+
+// 录入河道信息
+func AlterRiverInformation(uploadInfo AlterRiverReq) (code string) {
+	logs.Debug(uploadInfo)
+	if err := dao.AlterWaterInformation(uploadInfo.Id, uploadInfo.Name, uploadInfo.Address, uploadInfo.RiverName, uploadInfo.RiverLevel, uploadInfo.Flow, uploadInfo.AlertRiverLevel); err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+type AlterReservoirReq struct {
+	Id              int64   `json:"id"`
+	Name            string  `json:"name"`
+	Address         string  `json:"address"`
+	RiverName       string  `json:"river_name"`
+	RiverLevel      float32 `json:"river_level"`
+	Storage         float32 `json:"storage"`
+	AlertRiverLevel float32 `json:"alert_river_level"`
+}
+
+// 录入水库信息
+func UploadReservoirInformation(uploadInfo RiverReservoirReq) (code string) {
+	logs.Debug(uploadInfo)
+	if err := dao.InsertReservoirInformation(uploadInfo.Name, uploadInfo.Address, uploadInfo.RiverName, uploadInfo.RiverLevel, uploadInfo.Flow, uploadInfo.AlertRiverLevel); err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+// 修改水库信息
+func AlterReservoirInformation(uploadInfo AlterReservoirReq) (code string) {
+	logs.Debug(uploadInfo)
+	if err := dao.AlterReservoirInformation(uploadInfo.Id, uploadInfo.Name, uploadInfo.Address, uploadInfo.RiverName, uploadInfo.RiverLevel, uploadInfo.Storage, uploadInfo.AlertRiverLevel); err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+type SystemReq struct {
+	SystemName string  `json:"system_name"`
+	Name       string  `json:"name"`
+	Level      float32 `json:"level"`
+	Flow       float32 `json:"flow"`
+	Potential  string  `json:"potential"`
+}
+
+// 录入水系信息
+func UploadSystemInformation(uploadInfo SystemReq) (code string) {
+	logs.Debug(uploadInfo)
+	if err := dao.InsertSystemInformation(uploadInfo.SystemName, uploadInfo.Name, uploadInfo.Level, uploadInfo.Flow, uploadInfo.Potential); err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+type AlterSystemReq struct {
+	Id         int64   `json:"id"`
+	SystemName string  `json:"system_name" orm:"size(64);column(system_name)"`
+	Name       string  `json:"name" orm:"size(64);column(name)"`
+	Level      float32 `json:"level" orm:"size(12);column(level)"`
+	Flow       float32 `json:"flow" orm:"size(12);column(flow)"`
+	Potential  string  `json:"potential" orm:"size(32);column(potential)"`
+}
+
+// 修改全国水系信息
+func AlterSystemInformation(uploadInfo AlterSystemReq) (code string) {
+	logs.Debug(uploadInfo)
+	if err := dao.AlterSystemInformation(uploadInfo.Id, uploadInfo.SystemName, uploadInfo.Name, uploadInfo.Level, uploadInfo.Flow, uploadInfo.Potential); err != nil {
+		logs.Error(err)
+		code = "5000"
+		return
+	}
+	code = "2000"
+	return
+}
+
+// 查询全国重点河道信息
+func SelectWaterRiverInfo(name string) (r dao.WaterRiverInformation, code string) {
+	logs.Debug(name)
+	var err error
+	code = "2000"
+	r, err = dao.SelectWaterRiverByName(name)
 	if err != nil {
 		if err == orm.ErrNoRows {
-			code = "2007"
+			code = "4000"
 		} else {
 			logs.Error(err)
 			code = "5000"
 		}
-	} else {
-		code = "2000"
 	}
 	return
 }
 
-type AlterReq struct {
-	Id              int64  `json:"id"`
-	CompanyName     string `json:"company_name"`
-	Principal       string `json:"principal"`
-	TelephoneNumber string `json:"telephone_number"`
-	FaxNumber       string `json:"fax_number"`
-	PostCode        string `json:"post_code"`
-	Address         string `json:"address"`
-	Level           string `json:"level"`
-	Introduction    string `json:"introduction"`
-	Path            string
+// 查询全国重点水库信息
+func SelectWaterReservoirInfo(name string) (r dao.WaterReservoirInformation, code string) {
+	logs.Debug(name)
+	var err error
+	code = "2000"
+	r, err = dao.SelectWaterReservoirByName(name)
+	if err != nil {
+		if err == orm.ErrNoRows {
+			code = "4000"
+		} else {
+			logs.Error(err)
+			code = "5000"
+		}
+	}
+	return
 }
 
-// 修改水利信息
-func Alter(alterReq AlterReq) (code string) {
-	// 检查id值得信息是否存在
-	if tempInfo, err := dao.SelectWaterInformationById(alterReq.Id); err != nil {
-		if (err != orm.ErrNoRows) {
-			code = "5000"
+// 查询全国七大水系信息
+func SelectWaterSystemInfo(system_name, name string) (r dao.WaterSystemInformation, code string) {
+	logs.Debug(name)
+	var err error
+	code = "2000"
+	r, err = dao.SelectWaterSystemByName(system_name, name)
+	if err != nil {
+		if err == orm.ErrNoRows {
+			code = "4000"
 		} else {
-			// 不存在情况
-			code = "5001"
-		}
-	} else {
-		err = dao.AlterWaterInformation(alterReq.Id, alterReq.CompanyName, alterReq.Principal, alterReq.TelephoneNumber, alterReq.FaxNumber, alterReq.PostCode, alterReq.Address, alterReq.Level)
-		if err != nil {
 			logs.Error(err)
 			code = "5000"
-			return
 		}
-		var tempDetail dao.WaterInformationDetail
-		tempDetail, err = dao.SelectWaterInformationDetail(tempInfo.DetailId)
-		if err != nil {
-			logs.Error(err)
-			code = "5000"
-			return
-		} else {
-			if err := os.Remove(beego.AppConfig.String("waterInformationImagePath") + tempDetail.ImagePath); err != nil {
-				logs.Error(err)
-			}
-			if err = dao.AlterWaterInformationDetail(tempDetail.Id, alterReq.Introduction, alterReq.Path); err != nil {
-				logs.Error(err)
-				code = "5000"
-				return
-			}
-		}
-		code = "2000"
 	}
 	return
 }

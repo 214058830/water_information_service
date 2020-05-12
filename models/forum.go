@@ -4,9 +4,9 @@ import (
 	"github.com/astaxie/beego/orm"
 	"io/ioutil"
 	"os"
-	"water_information_service/lib"
 	"strconv"
 	"time"
+	"water_information_service/lib"
 
 	"water_information_service/dao"
 
@@ -222,6 +222,14 @@ func Like(article_id int, like_user_mail string, flag bool) (code string) {
 	return
 }
 
+// 论坛帖子点赞操作
+func Share(article_id int) (code string) {
+	if err := dao.UpdateShareNum(article_id, 1); err != nil {
+		logs.Error(err)
+	}
+	return "2000"
+}
+
 type Content struct {
 	ForumArticle dao.ForumContent `json:"forum_article"`
 	Content      string           `json:"content"`
@@ -334,6 +342,9 @@ func InsertComment(r CommentReq) (code string) {
 				logs.Error(err)
 			}
 		} else {
+			// 发送点赞的消息通知
+			InsertMessage(r.Article_id, r.Mail, "comment")
+
 			if err = dao.UpdateForumPropertyCommentNum(1); err != nil {
 				logs.Error(err)
 			}

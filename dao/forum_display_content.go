@@ -73,6 +73,20 @@ func UpdateLikeNum(id int, num int) (err error) {
 	return err
 }
 
+// 修改分享数信息 参数: [id, num] num: -1/1 点赞/取消赞
+func UpdateShareNum(id int, num int) (err error) {
+	var articleInfo ForumArticle
+	if articleInfo, err = SelecForumArticleById(id); err == nil {
+		articleInfo.ShareNum += num
+		if _, err = db.Update(&articleInfo); err != nil {
+			logs.Error(err)
+		}
+	} else {
+		logs.Error(err)
+	}
+	return err
+}
+
 // 修改评论数信息 参数: [id, num]
 func UpdateCommentNum(id int, num int) (err error) {
 	var articleInfo ForumArticle
