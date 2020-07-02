@@ -185,3 +185,11 @@ func CancelAllForumArticleAnnouncement() (err error) {
 	logs.Info(data)
 	return
 }
+
+// 删除展示内容
+func DeleteDisplayContent(id int) (err error) {
+	if _, err = db.Delete(&ForumArticle{Id: id}); err != nil {
+		logs.Error(err)
+	}
+	return
+}

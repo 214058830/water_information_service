@@ -58,3 +58,11 @@ func InsertForumContent(title string, filePath string) (err error) {
 	}
 	return err
 }
+
+// 删除存储内容
+func DeleteContent(id int) (err error) {
+	if _, err = db.Delete(&ForumContent{Id: id}); err != nil {
+		logs.Error(err)
+	}
+	return
+}

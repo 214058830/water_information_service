@@ -322,6 +322,23 @@ func removeFile(filePath string) (error) {
 	return err
 }
 
+type RemoveReq struct {
+	Article_id int `json:"id"`
+}
+
+// 删除帖子
+func RemoveContent(r RemoveReq) (code string) {
+	code = "2000"
+	displayForumArticle, _ := dao.SelecForumArticleById(r.Article_id)
+	_ = removeFile(displayForumArticle.ContentPath)
+	_ = dao.DeleteDisplayContent(r.Article_id)
+
+	forumArticle, _ := dao.SelecForumContentById(r.Article_id)
+	_ = removeFile(forumArticle.ContentPath)
+	_ = dao.DeleteContent(r.Article_id)
+	return
+}
+
 type CommentReq struct {
 	Article_id int    `json:"article_id"`
 	Mail       string `json:"mail"`

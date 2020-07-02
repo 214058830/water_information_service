@@ -106,6 +106,29 @@ func (this *ForumController) Release() {
 	this.ServeJSON()
 }
 
+// @Title Post
+// @删除帖子
+// @Success 200 success
+// @Failure 403 is empty
+// @router /remove [post]
+func (this *ForumController) Remove() {
+	var r forumRes
+	var req models.RemoveReq
+	body := this.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body, &req); err != nil {
+		logs.Error(err)
+		r.Code = "5000"
+		r.Msg = log.CodeMap[r.Code]
+		this.Data["json"] = r
+		this.ServeJSON()
+		return
+	}
+	r.Code = models.RemoveContent(req)
+	r.Msg = log.CodeMap[r.Code]
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
 // @Title Get
 // @查询论坛属性
 // @Success 200 success
